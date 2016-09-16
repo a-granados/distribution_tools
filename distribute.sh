@@ -11,9 +11,15 @@
 #nice value is 0, although this can vary depending on the linux version. Lowest priority is usually 19.
 #This means that, if you use this latter value, other instances launche by 
 #other users or yourself will have priority.
-
 #Ideally, the user home folder should be shared by all clients in the clientlist,
 #either using nfs or samba or whatever.
+
+#What the script does?
+# Every 20 seconds tt logs into the clients. For each client it counts the number of running instances.
+#If it is smaller that the corresponding second column (nprocess variable), then it launches
+#as many new instances as necessary to reach this value. When this is reached, the script checkes the next client.
+
+
 
 function crida(){
 ##Exemple:
@@ -23,13 +29,16 @@ ssh $actualclient "cd $datadir && nice -n $niceness ./$program $x  > outputfile_
 }
 
 i=1
-numpoints=19
 
 program=gp ##Name of the program. Try to avoid common names like "main" or program, to avoid coincidence with other users.
 datadir=`pwd` ##The current directory will be the working one.
 clientfile=$HOME/clientlist ##Mus be located in yor home directory
 clientfiletmp=clientslist_tmp
 precisio=10 #Number of digits to be used by the script.
+x0=0.1 #First value
+xf=10 #Last value
+numpoints=1000
+hx=$(echo "scale=$precisio;($xf - $x0)/$numpoints " | bc) 
 
 
 while [ $i -le $numpoints ]; do

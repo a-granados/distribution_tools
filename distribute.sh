@@ -1,6 +1,16 @@
 #!/bin/bash
 
-# ps -C gp -o pid,ruser=atamarit --no-headers --sort -time
+#This is a general purpose script to parameterized-like distribution. In other words, it
+#executes a certain program for number of different paramter values.
+#The general call of the program to be launched is given in "crida" function, and, for this example,
+#parameter x is varied.
+#The instances are launched trhough the network to a set of clients stored in the clientlist file.
+#At each client the script launches as many instances as given in the second column of the clientlist file
+#(probably the number of cpu's of that client). The third column indicates the "niceness" to be used
+#when launched. This sets the priority that the system will give to that particular process. Defaults
+#nice value is 0, although this can vary depending on the linux version. Lowest priority is usually 19.
+#This means that, if you use this latter value, other instances launche by 
+#other users or yourself will have priority.
 
 function crida(){
 ##Exemple:
@@ -12,7 +22,7 @@ ssh $actualclient "cd $datadir && nice -n $niceness ./$program $x  > outputfile_
 i=1
 numpoints=19
 
-programa=gp ##Name of the program. Try to avoid common names like "main" or program, to avoid coincidence with other users.
+program=gp ##Name of the program. Try to avoid common names like "main" or program, to avoid coincidence with other users.
 datadir=`pwd` ##The current directory will be the working one.
 clientfile=$HOME/clientlist ##Mus be located in yor home directory
 clientfiletmp=clientslist_tmp

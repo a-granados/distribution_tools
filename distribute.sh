@@ -12,6 +12,9 @@
 #This means that, if you use this latter value, other instances launche by 
 #other users or yourself will have priority.
 
+#Ideally, the user home folder should be shared by all clients in the clientlist,
+#either using nfs or samba or whatever.
+
 function crida(){
 ##Exemple:
 #Example: the program gets as input the parameter x, which is varied,
@@ -46,7 +49,7 @@ while [ $i -le $numpoints ]; do
 		if [ $i -le $numpoints ]; then
 ##======================================================================
 #Computation of the next value of x
-#			x=$(echo "scale=$precisio; $x0+($i-1)*$hx" | bc)
+			x=$(echo "scale=$precisio; $x0+($i-1)*$hx" | bc)
 #========================================================================
 		(
                 pids=$(ssh $actualclient "ps -C $programa -o pid --no-headers")
@@ -54,8 +57,9 @@ while [ $i -le $numpoints ]; do
 			sleep 1s
                         pids=$(ssh $actualclient "ps -C $programa -o pid --no-headers")
                 done
-                #echo "en el node $actualclient  abans de tirar el proces $i hi ha els pids: $pids"
-		crida
+                ##This is for checking purposes:
+                #echo "In node $actualclient there are currently $pids processes before launching process number $i"
+ 		crida
                 while [ `echo $?` -ne 0 ]; do
 			sleep 1s
 			crida
@@ -76,7 +80,7 @@ while [ $i -le $numpoints ]; do
 			actcliproc=$(ssh $actualclient "ps -C $programa -o pid --no-headers | wc -l "</dev/null)
 		done
 		else
-		###Per sortir del loop
+		###To quit the loop:
 		actcliproc=$nprocess
 		fi
 	done
